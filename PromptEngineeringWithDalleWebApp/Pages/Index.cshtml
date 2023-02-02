@@ -1,0 +1,67 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Practice Prompt Engineering";
+}
+
+<style>
+    .grid-container {
+        display: grid;
+        gap: 50px;
+        grid-auto-columns: 1fr;
+        grid-auto-flow: column;
+        grid-column-gap: 10px;
+    }
+
+    .images {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto auto;
+    }
+
+    input {
+        margin: 7px;
+        padding: 2px;
+    }
+
+
+    button {
+        margin: 5px;
+        padding: 5px;
+    }
+    
+</style>
+
+
+<div class="text-center">
+    <h1 class="display-4">Practice Prompt Engineering</h1>
+    <p>Guess the prompt that generated the image on the left.  Feel free to try multiple times, and see how close you can get to creating a similar image.  When you give up, click "Reveal Prompt" to see the original prompt.</p>
+</div>
+
+<div class="grid-container">
+    <div class="item1">
+        <form method="post">
+            <p id="txtHiddenPrompt">@ViewData["hiddenPrompt"]</p>
+        <img id="imgGuess" src="img/DALL·E 2022-05-18 10.10.35.png" alt="" width="512" height="512" />
+            <input id="btnRevealPrompt" type="submit" value="Reveal Prompt" asp-page-handler="Reveal" />
+        <input id="textSwitch" type="hidden" value="Reveal Prompt" />
+        </form>
+    </div>
+
+    <div class="item2">
+        <form method="post">
+        <p>Guess the prompt:</p>
+            <input asp-for="txtInput" id="txtInput" type="text" value="" width="Auto" />
+            <input id="btnGuess" type="submit" value="Guess" asp-page-handler="Guess" />
+        <input id="textSwitch" type="hidden" value="Guess" />
+
+        <div class="images">
+            <img id="image1" src=@ViewData["image1"] alt="" width="256" height="256" />
+            <img id="image2" src="img/DALL·E 2022-05-18 10.10.35.png" alt="" width="256" height="256" />
+            <img id="image3" src="img/DALL·E 2022-05-18 10.10.35.png" alt="" width="256" height="256" />
+            <img id="image4" src="img/DALL·E 2022-05-18 10.10.35.png" alt="" width="256" height="256" />
+        </div>
+        </form>
+    </div>
+</div>
