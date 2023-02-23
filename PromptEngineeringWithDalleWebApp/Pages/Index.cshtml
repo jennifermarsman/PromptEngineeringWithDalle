@@ -44,7 +44,7 @@
 <div class="grid-container">
     <div class="item1">
         <form method="post">
-            <img id="imgGuess" src="@ViewData["imageOriginal"]" alt="" width="512" height="512" />
+            <img id="imgOriginal" src="@ViewData["imageOriginal"]" alt="" width="512" height="512" />
             <p id="txtHiddenPrompt"><b>@ViewData["hiddenPrompt"]</b></p>
             <br/>
             <p>When you have created an image similar to the above (it will never be exact) or if you give up and want to see the original prompt that created this image:</p>
@@ -59,7 +59,7 @@
             <input id="btnGuess" type="submit" value="Guess" asp-page-handler="Guess"  />
             <br/>
             <div class="images">
-                <img id="image1" src=@ViewData["image1"] alt="" width="512" height="512" />
+                <img id="imgGuess" src=@ViewData["imageGuess"] alt="" width="512" height="512" />
             </div>
         </form>
     </div>

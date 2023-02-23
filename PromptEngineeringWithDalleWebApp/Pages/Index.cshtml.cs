@@ -22,7 +22,6 @@ using System.Net.Http.Json;
 // README file, setup, and link to video
 // Randomize the order of the prompts
 
-// Lock down to Microsoft employees?  
 // Alex feedback:
 // Use DV3 or something to build the prompts?  Maybe not for RAI.  
 // For hardcoding, include prompt hints.  (Tell why prompt works well to generate image.)  
@@ -77,7 +76,7 @@ namespace PromptEngineeringWithDalleWebApp.Pages
         {
             ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
             //await CallDalle("Oil painting of ballerinas warming up in a dance studio");
-            ViewData["image1"] = "img/clear.png";
+            ViewData["imageGuess"] = "img/clear.png";
         }
 
         public async Task OnPostGuess()
@@ -88,7 +87,7 @@ namespace PromptEngineeringWithDalleWebApp.Pages
 
         public void OnPostReveal()
         {
-            ViewData["image1"] = lastContentUrl;
+            ViewData["imageGuess"] = lastContentUrl;
             ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
             //ViewData["hiddenPrompt"] = "stained glass window of a wolf howling at the moon";
             ViewData["hiddenPrompt"] = imagePrompts[currentImagePromptIndex].prompt;
@@ -112,7 +111,7 @@ namespace PromptEngineeringWithDalleWebApp.Pages
 
                 // Set image src to contentUrl 
                 lastContentUrl = contentUrl;
-                ViewData["image1"] = contentUrl;
+                ViewData["imageGuess"] = contentUrl;
                 return;
             }
         }
