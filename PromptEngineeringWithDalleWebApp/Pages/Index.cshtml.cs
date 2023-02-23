@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
 using System.Reflection.Metadata;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.Json.Serialization;
+using System.Collections;
+using System.Net.Http.Json;
 
 // This was helpful:  
 // https://www.learnrazorpages.com/razor-pages/forms
@@ -16,10 +19,11 @@ using System.Text.Json.Serialization;
 // TODO:
 // Create collection of examples - baseball stadium
 // Create next button to iterate through
-// Move appropriate settings to appsettings.json
+// README file, setup, and link to video
+// Randomize the order of the prompts
+
 // Lock down to Microsoft employees?  
 // Alex feedback:
-// Originally leave the right image blank.   
 // Use DV3 or something to build the prompts?  Maybe not for RAI.  
 // For hardcoding, include prompt hints.  (Tell why prompt works well to generate image.)  
 // Include link to general prompt guidance.  
@@ -37,13 +41,23 @@ namespace PromptEngineeringWithDalleWebApp.Pages
         private string apiKey;
         private string resourceName;
 
+        // This value will be loaded from configuration file ImagePromptConfig.json.
+        List<ImagePromptConfig> imagePrompts;
+
+        // Keeping track of the current image prompt.
+        private int currentImagePromptIndex = 0;
+
+
         [BindProperty]
         public string txtInput { get; set; } = "";
 
-        public static string lastContentUrl { get; set; } = "";
+        public static string lastContentUrl { get; set; } = "img/clear.png";
 
         public IndexModel(IConfiguration configuration, ILogger<IndexModel> logger)
         {
+            // TODO: why is it calling this every time?  (Set breakpoint in here.)
+            // If I remove the parameters, will that fix it?  
+
             _configuration = configuration;
             _logger = logger;
 
@@ -52,36 +66,32 @@ namespace PromptEngineeringWithDalleWebApp.Pages
             apiKey = _configuration["AzureOpenAIResourceKey"];
 
             // Load image configuration file
-            //            string jsonString = File.ReadAllText("ImagePromptConfig.json");
-            //using (StreamReader r = new JsonTextReader("ImagePromptConfig.json"))
-            //{
-            //    string json = r.ReadToEnd();
-            //    dynamic array = JsonConvert.DeserializeObject(json);
-            //}
+            string jsonString = System.IO.File.ReadAllText("ImagePromptConfig.json");
+            imagePrompts = JsonSerializer.Deserialize<List<ImagePromptConfig>>(jsonString);
+            
+            // Initialize prompt index.  
+            currentImagePromptIndex = 0;
         }
-
-        //public IndexModel(ILogger<IndexModel> logger)
-        //{
-        //    _logger = logger;
-        //}
 
         public void OnGet()
         {
+            ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
             //await CallDalle("Oil painting of ballerinas warming up in a dance studio");
             ViewData["image1"] = "img/clear.png";
         }
 
         public async Task OnPostGuess()
         {
+            ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
             await CallDalle(txtInput);
         }
 
         public void OnPostReveal()
         {
             ViewData["image1"] = lastContentUrl;
+            ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
             //ViewData["hiddenPrompt"] = "stained glass window of a wolf howling at the moon";
-            //ViewData["hiddenPrompt"] = "lake at sunset with snowflakes falling and pine trees in the background, high-quality digital art";
-            ViewData["hiddenPrompt"] = "huskies pulling a dogsled through the snow at sunset with snowflakes falling and pine trees in the background, digital art";
+            ViewData["hiddenPrompt"] = imagePrompts[currentImagePromptIndex].prompt;
         }
 
         private async Task CallDalle(string prompt)
