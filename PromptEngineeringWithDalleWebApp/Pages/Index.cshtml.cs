@@ -12,21 +12,12 @@ using System.Text.Json.Serialization;
 using System.Collections;
 using System.Net.Http.Json;
 
-// This was helpful:  
-// https://www.learnrazorpages.com/razor-pages/forms
-// https://www.aspsnippets.com/Articles/ASPNet-Core-Using-Multiple-Submit-Buttons-in-Razor-Pages.aspx
 
 // TODO:
 // Create collection of examples - baseball stadium
-// Create next button to iterate through
 // README file, setup, and link to video
 // Randomize the order of the prompts
-
-// Alex feedback:
-// Use DV3 or something to build the prompts?  Maybe not for RAI.  
-// For hardcoding, include prompt hints.  (Tell why prompt works well to generate image.)  
-// Include link to general prompt guidance.  
-// Scale plan?  Release to Microsoft only?  If so, need auth.  
+ 
 
 namespace PromptEngineeringWithDalleWebApp.Pages
 {
@@ -44,7 +35,7 @@ namespace PromptEngineeringWithDalleWebApp.Pages
         List<ImagePromptConfig> imagePrompts;
 
         // Keeping track of the current image prompt.
-        private int currentImagePromptIndex = 0;
+        private static int currentImagePromptIndex = 0;
 
 
         [BindProperty]
@@ -67,9 +58,6 @@ namespace PromptEngineeringWithDalleWebApp.Pages
             // Load image configuration file
             string jsonString = System.IO.File.ReadAllText("ImagePromptConfig.json");
             imagePrompts = JsonSerializer.Deserialize<List<ImagePromptConfig>>(jsonString);
-            
-            // Initialize prompt index.  
-            currentImagePromptIndex = 0;
         }
 
         public void OnGet()
@@ -91,6 +79,19 @@ namespace PromptEngineeringWithDalleWebApp.Pages
             ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
             //ViewData["hiddenPrompt"] = "stained glass window of a wolf howling at the moon";
             ViewData["hiddenPrompt"] = imagePrompts[currentImagePromptIndex].prompt;
+        }
+
+        public void OnPostNext()
+        {
+            // Reset the guess image to empty.  
+            ViewData["imageGuess"] = "img/clear.png";
+
+            // Hide the prompt again.  
+            ViewData["hiddenPrompt"] = "";
+
+            // Get the next image to display.  
+            currentImagePromptIndex++;
+            ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
         }
 
         private async Task CallDalle(string prompt)

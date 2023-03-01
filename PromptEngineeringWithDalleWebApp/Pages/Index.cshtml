@@ -13,6 +13,17 @@
         grid-column-gap: 10px;
     }
 
+    .bottom-row {
+        float: right;
+    }
+
+    .right {
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+        margin-right: 0;
+    }
+
     .images {
         display: grid;
         gap: 10px;
@@ -63,4 +74,10 @@
             </div>
         </form>
     </div>
+</div>
+
+<div class="bottom-row">
+    <form method="post">
+        <input id="btnNext" type="submit" value="Next" asp-page-handler="Next" />
+    </form>
 </div>

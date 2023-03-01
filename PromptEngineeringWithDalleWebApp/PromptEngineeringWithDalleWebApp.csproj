@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings - Copy.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\img\900661231.JPG" />
     <None Include="wwwroot\img\DALL·E 2022-05-18 10.10.35.png" />
   </ItemGroup>
 
