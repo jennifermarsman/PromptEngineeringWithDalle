@@ -11,6 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Text.Json.Serialization;
 using System.Collections;
 using System.Net.Http.Json;
+using System.Xml.Linq;
 
 
 // TODO:
@@ -77,7 +78,6 @@ namespace PromptEngineeringWithDalleWebApp.Pages
         {
             ViewData["imageGuess"] = lastContentUrl;
             ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
-            //ViewData["hiddenPrompt"] = "stained glass window of a wolf howling at the moon";
             ViewData["hiddenPrompt"] = imagePrompts[currentImagePromptIndex].prompt;
         }
 
@@ -88,9 +88,17 @@ namespace PromptEngineeringWithDalleWebApp.Pages
 
             // Hide the prompt again.  
             ViewData["hiddenPrompt"] = "";
+            lastContentUrl = "img/clear.png";
 
             // Get the next image to display.  
+            // TODO: RAI blockers for input - what should experience be?  (input of hell)
             currentImagePromptIndex++;
+            if (currentImagePromptIndex >= imagePrompts.Count)
+            {
+                // Reset to beginning.
+                currentImagePromptIndex = 0;
+            }
+            
             ViewData["imageOriginal"] = "img/" + imagePrompts[currentImagePromptIndex].image;
         }
 
