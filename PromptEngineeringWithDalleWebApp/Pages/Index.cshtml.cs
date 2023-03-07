@@ -91,7 +91,6 @@ namespace PromptEngineeringWithDalleWebApp.Pages
             lastContentUrl = "img/clear.png";
 
             // Get the next image to display.  
-            // TODO: RAI blockers for input - what should experience be?  (input of hell)
             currentImagePromptIndex++;
             if (currentImagePromptIndex >= imagePrompts.Count)
             {
@@ -148,13 +147,32 @@ namespace PromptEngineeringWithDalleWebApp.Pages
             DalleImageResponse? output2 = JsonSerializer.Deserialize<DalleImageResponse>(response2.Content.ReadAsStringAsync().Result);
             while (output2 != null && output2.status != "Succeeded")
             {
+                // Handle the case if the request fails (such as due to RAI reasons/content filter)
+                if (output2.status == "Failed")
+                {
+                    Debug.WriteLine(output2.error.code);
+                    Debug.WriteLine(output2.error.message);
+                    
+                    string contentUrl;
+                    if (output2.error.code == "ContentFilter")
+                    {
+                        contentUrl = "img/ContentFilter.png";
+                    }
+                    else
+                    {
+                        contentUrl = "img/Error.png";
+                    }
+                    return contentUrl;
+                }
+
+                // Otherwise, wait and try again as the image may not have processed yet.
                 Thread.Sleep(500);  // wait for 0.5 second
                 response2 = await client.GetAsync(operationLocation);
-                //Debug.WriteLine(response2.ToString());
                 response2.EnsureSuccessStatusCode();
                 output2 = JsonSerializer.Deserialize<DalleImageResponse>(response2.Content.ReadAsStringAsync().Result);
             }
             
+            // Unpack the output.  
             if (output2 != null && output2.result != null)
             {
                 var caption = output2.result.caption;
@@ -162,11 +180,17 @@ namespace PromptEngineeringWithDalleWebApp.Pages
                 var contentUrlExpiresAt = output2.result.contentUrlExpiresAt;
                 var createdDateTime = output2.result.createdDateTime;
 
+                // Use clear gif instead of empty link if no image.  
+                if (contentUrl == "")
+                {
+                    contentUrl = "img/clear.png";
+                }
+
                 return contentUrl;
             }
 
             // This shouldn't happen on successful path.  
-            return "";
+            return "img/clear.png";
         }
 
         
