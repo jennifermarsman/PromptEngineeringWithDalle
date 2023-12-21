@@ -6,7 +6,7 @@
         public DalleRequest(string caption, string resolution)
         {
             this.caption = caption;
-            this.resolution = resolution;
+            this.resolution = resolution; 
         }
 
         public string caption { get; set; } = "";
